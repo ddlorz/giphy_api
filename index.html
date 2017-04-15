@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <title>GIF Ajax</title>
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Francois+One" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    body {
+      font-family: 'Francois One', sans-serif;
+    }
+    .embeddedmp4 {
+      max-height: 250px;
+      max-width: 250px;
+      border: 2px inset #bfbfbf;
+      border-radius: 15px;
+      opacity: 0.5;
+    }
+    .videos {
+      min-height: 220px;
+      min-width: 250px;
+      display: inline-block;
+      margin: 0 5px 0 5px;  
+    }
+    .tags {
+      margin: 0 5px 0 5px;
+    }
+    #buttonSide {
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+    #searchBarSide {
+      margin: 50px 0 50px 0;
+    }
+    
+
+  </style>
+</head>
+
+<body>
+  <div class="container text-center" id="buttonSide"></div>
+  <div class="container">    
+    <div class="row text-center" id="animateSide"></div>
+    <div class="row" id="searchBarSide">
+      <form class="text-center">
+        <input type="text" id="gifTag">
+        <input type="submit" class="btn btn-default" id="submit">
+      </form>
+    </div>
+    <div class="row text-center">
+      <div class="col-lg-12" id="gifSide"></div>
+    </div>
+  </div>
+
+  <script  src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+  //<script type="text/javascript" src="assets/javascript/app.js">
+    var gifObject = {
+      inputTag: "dog",
+
+      createNewVid: function(mp4Location) {
+        var newVid = $("<video>");
+        newVid.attr("loop", "loop");
+        newVid.attr("type", "video/mp4");        
+        newVid.attr("src", mp4Location);
+        newVid.val("notRunning");
+        newVid.addClass("embeddedmp4");
+        return newVid;
+      },
+
+      createNewDiv: function(ratingLocation) {
+        var newDiv = $("<div>");          
+        newDiv.addClass("videos");
+        newDiv.html("Rating: " + ratingLocation + "<br>");
+        return newDiv;
+      },
+
+      createNewBtn: function(inputTag) {
+        var newBtn = $("<button>");
+        newBtn.addClass("btn btn-default tags");
+        newBtn.html(inputTag);
+        return newBtn;
+      },
+
+      motionControl: function(theElement) {
+        if ($(theElement).val() === "running") {
+          $(theElement).get(0).pause();
+          $(theElement).animate({
+            opacity: 0.5
+          }, 1000, function() {});
+          $(theElement).val("notRunning")
+        } 
+        else if ($(theElement).val() === "notRunning"){
+          $(theElement).get(0).play();   
+          $(theElement).animate({
+            opacity: 1.0
+          }, 1000, function() {});       
+          $(theElement).val("running")
+        }
+      },
+
+      clearOut: function() {
+        event.preventDefault();
+        $("#gifSide").empty();
+      },
+
+      pullANDdisplayGIFs: function(inputTag) {
+        $.ajax({
+          url: "https://api.giphy.com/v1/gifs/search?q=" + inputTag + "&api_key=dc6zaTOxFJmzC",
+          type: "GET",
+          success: function(response) {
+            
+            if (response.data.length > 0) {
+              console.log(response);
+              animatedGIFs(response);
+              var counter = 0;
+              var i = 0;
+              while (counter < 10) {
+                if (parseInt(response.data[i].images.original.height) < 300) {
+                  var mp4Location = response.data[i].images.original.mp4;
+                  var ratingLocation = response.data[i].rating;          
+                  
+                  var newDiv = gifObject.createNewDiv(ratingLocation)
+                  var newVid = gifObject.createNewVid(mp4Location);
+
+                  newDiv.append(newVid);
+                  $("#gifSide").append(newDiv);   
+                  //animatedGIFs(newVid);            
+                  counter++;
+                }
+                i++;                
+              }
+              var newBtn = gifObject.createNewBtn(inputTag);
+              $("#buttonSide").append(newBtn);
+            }
+            else if (response.data.length === 0) {
+              $("#gifSide").append("Search Failed. Try Again");
+            }
+          }
+        });
+      },
+
+    };   
+
+    //$.ajax({
+    //      url: "https://data.qld.gov.au/dataset/1337d9cd-cb0c-46c5-a1cc-44a6591a54aa",
+    //      type: "GET",
+    //      success: function(response) {
+    //        console.log(response);
+    //     }
+    //});
+
+    gifObject.pullANDdisplayGIFs(gifObject.inputTag);
+
+    //animatedGIFs();
+
+    function animatedGIFs(anObject) {
+          var mp4Location = anObject.data[0].images.original.mp4;
+          var newVid = gifObject.createNewVid(mp4Location);
+
+          newVid.css("opacity", "1.0");
+          newVid.css("position", "relative");
+          $("#animateSide").append(newVid);
+          newVid.animate({
+                opacity: 0,
+                left: "+=400px"
+          }, 5000, 
+                  function() {
+                      $("#animateSide").addClass("invisible");
+                  }); 
+    };
+
+
+    $("div").on("click", "video", function(event) {
+          gifObject.motionControl(this);  
+          event.stopImmediatePropagation();
+    });
+
+    $("#submit").on("click", function(event) {
+          gifObject.clearOut();
+          var inputTag = $("#gifTag").val();
+          $("#gifTag").val("");      
+          console.log(inputTag);          
+          
+          gifObject.pullANDdisplayGIFs(inputTag);
+    });  
+
+    $("div").on("click", "button.tags", function() {
+          gifObject.clearOut();
+
+          var inputTag = $(this).text();
+          console.log(inputTag);
+
+          gifObject.pullANDdisplayGIFs(inputTag);  
+    }); 
+    
+  </script>
+
+</body>
+</html>
