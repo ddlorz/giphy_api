@@ -1,6 +1,6 @@
 body {
   font-family: 'Francois One', sans-serif;
-  background-color: #f2f2f2;
+  background-color: #e6ffe6;
 }
 footer {
   min-height: 50px;
@@ -46,4 +46,7 @@ footer {
 }   
 #spacer {
   min-height: 120px;
+}
+#submit, .tags {
+  background-color: #b3e6ff;
 }
