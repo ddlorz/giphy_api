@@ -1,5 +1,6 @@
 var gifObject = {
-  inputTag: "dog",
+  topics: ["DOG", "CAT", "LION", "KANGAROO", "HYENA", "MONKEY", 
+          "SQUIRREL", "GOLDFISH", "GIRAFFE", "SKUNK", "HAMSTER"],
   inputTagArray: [],
   indexCounter: [],
 
@@ -23,7 +24,7 @@ var gifObject = {
   createNewDiv: function(ratingLocation) {
     var newDiv = $("<div>");          
     newDiv.addClass("videos");
-    newDiv.html("Rating: " + ratingLocation + "<br>");
+    newDiv.html("<br>Rating: " + ratingLocation);
     return newDiv;
   },
 
@@ -75,7 +76,7 @@ var gifObject = {
               var newVid = gifObject.createNewVid(mp4Location);
               gifObject.indexCounter.push(i);
 
-              newDiv.append(newVid);
+              newDiv.prepend(newVid);
               $("#gifSide").append(newDiv);    
               counter++;
             }
@@ -83,10 +84,11 @@ var gifObject = {
           }                  
           animatedGIFs(response);          
           
-          if (gifObject.inputTagArray.indexOf(inputTag.toUpperCase()) === -1) {
+          inputTag = inputTag.toUpperCase();
+          if (gifObject.topics.indexOf(inputTag) === -1) {
               var newBtn = gifObject.createNewBtn(inputTag);
               $("#buttonSide").append(newBtn);
-              gifObject.inputTagArray.push(inputTag.toUpperCase());
+              gifObject.topics.push(inputTag);
           }
         }
         else if (response.data.length === 0) {
@@ -110,25 +112,18 @@ var gifObject = {
         }, 10000, function() {}); 
   },
 
+  initialBtnDisplay: function() {
+        for (var i = 0; i < gifObject.topics.length; i++) {
+              var newBtn = gifObject.createNewBtn(gifObject.topics[i]);
+              $("#buttonSide").append(newBtn);
+        }
+  },
+
 };   
 
 var timed;
-
-gifObject.pullANDdisplayGIFs(gifObject.inputTag);
-$("#formLabel").html("Enter an Animal: ");        
-
-function animatedGIFs(anObject) {
-      var i = Math.floor(Math.random() * 10);
-      gifObject.displayAnimation(i, anObject); 
-
-      console.log(i);              
-      
-      timed = setInterval(function() {
-          i = Math.floor(Math.random() * 10);
-          gifObject.displayAnimation(i, anObject);                           
-      }, 10000);
-};
-
+$("#formLabel").html("Enter Animal: ");  
+gifObject.initialBtnDisplay();    
 
 $("div").on("click", "video", function(event) {
       gifObject.motionControl(this);  
@@ -155,3 +150,15 @@ $("#buttonSide").on("click", "button.tags", function() {
 
       gifObject.pullANDdisplayGIFs(inputTag);  
 }); 
+
+function animatedGIFs(anObject) {
+      var i = Math.floor(Math.random() * 10);
+      gifObject.displayAnimation(i, anObject); 
+
+      console.log(i);              
+      
+      timed = setInterval(function() {
+          i = Math.floor(Math.random() * 10);
+          gifObject.displayAnimation(i, anObject);                           
+      }, 10000);
+};
