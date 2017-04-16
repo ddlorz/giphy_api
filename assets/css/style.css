@@ -1,0 +1,49 @@
+body {
+  font-family: 'Francois One', sans-serif;
+  background-color: #f2f2f2;
+}
+footer {
+  min-height: 50px;
+}
+.embeddedmp4 {
+  max-height: 250px;
+  max-width: 250px;
+  border: 2px inset #bfbfbf;
+  border-radius: 15px;
+  opacity: 0.5;
+}
+.videos {
+  min-height: 220px;
+  min-width: 250px;
+  display: inline-block;
+  margin: 0 5px 0 5px;  
+}
+.tags {
+  margin: 0 5px 0 5px;
+}
+.animatedImg {
+  height: 150px;
+  width: auto;
+  border-radius: 10px;
+  position: relative;
+  right: 25%;
+}
+.grayBG {
+  background-color: #cccccc;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-radius: 20px;
+}
+.labels {
+  margin-top: 50px;
+  font-size: 20pt;
+}    
+#buttonSide {
+  margin-bottom: 50px;
+}
+#searchBarSide {
+  margin: 50px 0 50px 0;
+}   
+#spacer {
+  min-height: 120px;
+}
